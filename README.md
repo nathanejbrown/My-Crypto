@@ -1,0 +1,1 @@
+## This is a project I'm doing to teach myself Python. By the end, I'll have built my own cryptocurrency using Blockchain technology. 
