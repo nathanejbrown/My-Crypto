@@ -1,6 +1,7 @@
 import functools
 import hashlib as hl
 import json
+from collections import OrderedDict
 # Initializing our blockchain list
 MINING_REWARD = 10
 
@@ -17,7 +18,8 @@ participants = {'Nathan'}
 
 def hash_block(block):
     # json.dumps turns the block into a readable string, which hl.sha256() requires. hexdigest() returns the hash with normal characters
-    return hl.sha256(json.dumps(block).encode()).hexdigest()
+    # Sort_keys takes the dictionary, which is unordered, and orders it so that the same input always returns the same output.
+    return hl.sha256(json.dumps(block, sort_keys=True).encode()).hexdigest()
 
 def valid_proof(transactions, last_hash, proof):
     guess = (str(transactions) + str(last_hash) + str(proof)).encode()
@@ -56,10 +58,12 @@ def verify_transaction(transaction):
 
 def add_transaction(recipient, sender=owner, amount=1.0):
 
-    transaction = {
-        'sender': sender,
-        'recipient': recipient,
-        'amount': amount}
+    # transaction = {
+    #     'sender': sender,
+    #     'recipient': recipient,
+    #     'amount': amount
+    # }
+    transaction = OrderedDict([('sender', sender), ('recipient', recipient), ('amount', amount)])
     if verify_transaction(transaction):
         open_transactions.append(transaction)
         participants.add(sender)
@@ -72,11 +76,12 @@ def mine_block():
     last_block = blockchain[-1]
     hashed_block = hash_block(last_block)
     proof = proof_of_work()
-    reward_transaction = {
-        'sender': 'MINING',
-        'recipient': owner,
-        'amount': MINING_REWARD
-    }
+    # reward_transaction = {
+    #     'sender': 'MINING',
+    #     'recipient': owner,
+    #     'amount': MINING_REWARD
+    # }
+    reward_transaction = OrderedDict([('sender', 'MINING'), ('recipient', owner), ('amount', MINING_REWARD)])
     # [:] tells it to copy the entire list, not just to copy the reference to it in memory. Before the : you can add the starting index and the last index + 1 that you want copied. 
     copied_transactions = open_transactions[:]
     copied_transactions.append(reward_transaction)
