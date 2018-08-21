@@ -17,6 +17,10 @@ open_transactions = []
 owner = 'Nathan'
 participants = {'Nathan'}
 
+def save_data():
+    with open('blockchain.txt', mode='w') as f:
+        
+
 def valid_proof(transactions, last_hash, proof):
     guess = (str(transactions) + str(last_hash) + str(proof)).encode()
     guess_hash = hash_string_256(guess)
