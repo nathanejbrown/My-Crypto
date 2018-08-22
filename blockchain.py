@@ -179,8 +179,9 @@ def verify_chain():
 def verify_transactions():
     return all([verify_transaction(tx) for tx in open_transactions])
 
+waiting_for_input = True
 
-while True:
+while waiting_for_input:
     print('Please choose')
     print('1: Add a new transaction value')
     print('2: Mine a new block')
@@ -219,7 +220,7 @@ while True:
                 'transactions': [{'Sender': 'Chris Martin', 'recipient': 'Bono', 'amount': '1000000'}]
             }
     elif user_choice == 'q':
-        break
+        waiting_for_input = False
     else:
         print('Invalid choice')
     if not verify_chain():
