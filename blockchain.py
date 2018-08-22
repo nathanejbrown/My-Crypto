@@ -162,7 +162,8 @@ def print_blockchain_elements():
     for block in blockchain:
         print('Outputting block')
         print(block)
-
+    else:
+        print('-' * 20)
 
 def verify_chain():
     # enumerate returns a tuple with the index of the item and the item itself.
