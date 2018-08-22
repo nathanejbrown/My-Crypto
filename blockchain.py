@@ -65,7 +65,6 @@ def save_data():
 def valid_proof(transactions, last_hash, proof):
     guess = (str(transactions) + str(last_hash) + str(proof)).encode()
     guess_hash = hash_string_256(guess)
-    print(guess_hash)
     # Checks to see if the [0] and [1] indeces match the condition
     return guess_hash[0:2] == '00'
 
