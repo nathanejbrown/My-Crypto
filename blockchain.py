@@ -30,13 +30,6 @@ def load_data():
                 converted_tx = [OrderedDict(
                         [('sender', tx['sender']), ('recipient', tx['recipient']), ('amount', tx['amount'])]) for tx in block['transactions']]
                 updated_block = Block(block['index'], block['previous_hash'], converted_tx, block['proof'], block['timestamp'])
-                # updated_block = {
-                #     'previous_hash': block['previous_hash'],
-                #     'index': block['index'],
-                #     'proof': block['proof'],
-                #     'transactions': [OrderedDict(
-                #         [('sender', tx['sender']), ('recipient', tx['recipient']), ('amount', tx['amount'])]) for tx in block['transactions']]
-                # }
                 updated_blockchain.append(updated_block)
             blockchain = updated_blockchain
             open_transactions = json.loads(file_content[1])
@@ -48,12 +41,6 @@ def load_data():
             open_transactions = updated_transactions
     except IOError:
         genesis_block = Block(0, '', [], 100, 0)
-        # genesis_block = {
-        #     'previous_hash': '',
-        #     'index': 0,
-        #     'transactions': [],
-        #     'proof': 100
-        # }
         blockchain = [genesis_block]
         open_transactions = []
     finally:    
@@ -69,11 +56,6 @@ def save_data():
             f.write(json.dumps(blockchain))
             f.write('\n')
             f.write(json.dumps(open_transactions))
-            # save_data = {
-            #     'chain': blockchain,
-            #     'ot': open_transactions
-            # }
-            # f.write(pickle.dumps(save_data))
     except IOError:
         print('Saving failed')
 
@@ -116,11 +98,6 @@ def verify_transaction(transaction):
 
 def add_transaction(recipient, sender=owner, amount=1.0):
 
-    # transaction = {
-    #     'sender': sender,
-    #     'recipient': recipient,
-    #     'amount': amount
-    # }
     transaction = OrderedDict([('sender', sender), ('recipient', recipient), ('amount', amount)])
     if verify_transaction(transaction):
         open_transactions.append(transaction)
@@ -135,22 +112,11 @@ def mine_block():
     last_block = blockchain[-1]
     hashed_block = hash_block(last_block)
     proof = proof_of_work()
-    # reward_transaction = {
-    #     'sender': 'MINING',
-    #     'recipient': owner,
-    #     'amount': MINING_REWARD
-    # }
     reward_transaction = OrderedDict([('sender', 'MINING'), ('recipient', owner), ('amount', MINING_REWARD)])
     # [:] tells it to copy the entire list, not just to copy the reference to it in memory. Before the : you can add the starting index and the last index + 1 that you want copied. 
     copied_transactions = open_transactions[:]
     copied_transactions.append(reward_transaction)
     block = Block(len(blockchain), hashed_block, copied_transactions, proof)
-    # block = {
-    #     'previous_hash': hashed_block,
-    #     'index': len(blockchain),
-    #     'transactions': copied_transactions,
-    #     'proof': proof
-    # }
     blockchain.append(block)
     return True
 
