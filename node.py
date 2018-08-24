@@ -59,8 +59,8 @@ class Node:
                 waiting_for_input = False
             else:
                 print('Invalid choice')
-            verifier = Verification()
-            if not verifier.verify_chain(self.blockchain.chain):
+            # Verification.verify_chain() works here despite not instantiating that class because verify_chain is a @staticmethod
+            if not Verification.verify_chain(self.blockchain.chain):
                 self.print_blockchain_elements()
                 print('Invalid blockchain')
                 break
