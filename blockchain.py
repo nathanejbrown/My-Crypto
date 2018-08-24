@@ -14,13 +14,26 @@ class Blockchain:
     # __init__ scopes these values to a specific instance, not to the class as a whole.
     def __init__(self, hosting_node_id):
         genesis_block = Block(0, '', [], 100, 0)
-        self.__chain = [genesis_block]
-        self.__open_transactions = []
+        self.chain = [genesis_block]
+        self.open_transactions = []
         self.load_data()
         self.hosting_node = hosting_node_id
 
-    def get_chain(self):
+    @property
+    def chain(self):
         return self.__chain[:]
+
+    @chain.setter
+    def chain(self, val):
+        self.__chain = val
+
+    @property
+    def open_transactions(self):
+        return self.__open_transactions[:]
+
+    @open_transactions.setter
+    def open_transactions(self, val):
+        self.__open_transactions = val
 
     def get_open_transactions(self):
         return self.__open_transactions[:]
@@ -39,13 +52,13 @@ class Blockchain:
                     converted_tx = [Transaction(tx['sender'], tx['recipient'], tx['amount']) for tx in block['transactions']]
                     updated_block = Block(block['index'], block['previous_hash'], converted_tx, block['proof'], block['timestamp'])
                     updated_blockchain.append(updated_block)
-                self.__chain = updated_blockchain
+                self.chain = updated_blockchain
                 open_transactions = json.loads(file_content[1])
                 updated_transactions = []
                 for tx in open_transactions:
                     updated_transaction = Transaction(tx['sender'], tx['recipient'], tx['amount'])
                     updated_transactions.append(updated_transaction)
-                self.__open_transactions = updated_transactions
+                self.open_transactions = updated_transactions
         except (IOError, IndexError):
             pass
         finally:    
