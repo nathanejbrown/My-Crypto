@@ -44,8 +44,6 @@ class Blockchain:
                 # file_content = pickle.loads(f.read())
                 file_content = f.readlines()
 
-                # blockchain = file_content['chain']
-                # open_transactions = file_content['ot']
                 blockchain = json.loads(file_content[0][:-1])
                 updated_blockchain = []
                 for block in blockchain:
