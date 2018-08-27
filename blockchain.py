@@ -47,14 +47,14 @@ class Blockchain:
                 blockchain = json.loads(file_content[0][:-1])
                 updated_blockchain = []
                 for block in blockchain:
-                    converted_tx = [Transaction(tx['sender'], tx['recipient'], tx['amount']) for tx in block['transactions']]
+                    converted_tx = [Transaction(tx['sender'], tx['recipient'], tx['signature'], tx['amount']) for tx in block['transactions']]
                     updated_block = Block(block['index'], block['previous_hash'], converted_tx, block['proof'], block['timestamp'])
                     updated_blockchain.append(updated_block)
                 self.chain = updated_blockchain
                 open_transactions = json.loads(file_content[1])
                 updated_transactions = []
                 for tx in open_transactions:
-                    updated_transaction = Transaction(tx['sender'], tx['recipient'], tx['amount'])
+                    updated_transaction = Transaction(tx['sender'], tx['recipient'], tx['signature'], tx['amount'])
                     updated_transactions.append(updated_transaction)
                 self.open_transactions = updated_transactions
         except (IOError, IndexError):
@@ -105,7 +105,7 @@ class Blockchain:
     def add_transaction(self, recipient, sender, signature, amount=1.0):
         if self.hosting_node == None:
             return False
-        transaction = Transaction(sender, recipient, amount)
+        transaction = Transaction(sender, recipient, signature, amount)
         if Verification.verify_transaction(transaction, self.get_balance):
             self.__open_transactions.append(transaction)
             self.save_data()
@@ -118,7 +118,7 @@ class Blockchain:
         last_block = self.__chain[-1]
         hashed_block = hash_block(last_block)
         proof = self.proof_of_work()
-        reward_transaction = Transaction('MINING', self.hosting_node, MINING_REWARD)
+        reward_transaction = Transaction('MINING', self.hosting_node, '', MINING_REWARD)
         # [:] tells it to copy the entire list, not just to copy the reference to it in memory. Before the : you can add the starting index and the last index + 1 that you want copied. 
         copied_transactions = self.__open_transactions[:]
         copied_transactions.append(reward_transaction)
