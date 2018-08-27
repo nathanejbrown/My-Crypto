@@ -89,7 +89,7 @@ def add_transaction():
     success = blockchain.add_transaction(recipient, wallet.public_key, signature, amount)
     if success:
         response = {
-            'Message': 'Successfully added transaction',
+            'message': 'Successfully added transaction',
             'transaction': {
                 'sender': wallet.public_key,
                 'recipient': recipient,
@@ -101,7 +101,7 @@ def add_transaction():
         return jsonify(response), 200
     else:
         response = {
-            'Message': 'Creating a transaction failed.'
+            'message': 'Creating a transaction failed.'
         }
         return jsonify(response), 500
 
