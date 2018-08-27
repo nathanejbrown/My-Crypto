@@ -20,7 +20,7 @@ def create_keys():
             'private_key': wallet.private_key,
             'funds': blockchain.get_balance()
         }
-        return jsonify(response), 201
+        return jsonify(response), 200
     else: 
         response = {
             'message': 'Saving the keys failed.'
@@ -37,7 +37,7 @@ def load_keys():
             'private_key': wallet.private_key,
             'funds': blockchain.get_balance()
         }
-        return jsonify(response), 201
+        return jsonify(response), 200
     else: 
         response = {
             'message': 'Loading the keys failed.'
@@ -52,7 +52,7 @@ def get_balance():
             'message': 'Fetching balance succeeded.',
             'funds': balance
         }
-        return jsonify(response), 201
+        return jsonify(response), 200
     else:
         response = {
             'message': 'Loading balance failed',
@@ -98,7 +98,7 @@ def add_transaction():
             },
             'funds': blockchain.get_balance()
         }
-        return jsonify(response), 201
+        return jsonify(response), 200
     else:
         response = {
             'Message': 'Creating a transaction failed.'
@@ -116,13 +116,20 @@ def mine():
             'block': dict_block,
             'funds': blockchain.get_balance()
         }
-        return jsonify(response), 201
+        return jsonify(response), 200
     else:
         response = {
             'message': 'Adding a block failed.',
             'wallet_set_up': wallet.public_key != None
         }
         return jsonify(response), 500
+
+@app.route('/transactions', methods=['GET'])
+def get_open_transactions():
+    transactions = blockchain.get_open_transactions()
+    dict_transactions = [tx.__dict__ for tx in transactions]
+    return jsonify(dict_transactions), 200
+
 
 @app.route('/chain', methods=['GET'])
 def get_chain():
