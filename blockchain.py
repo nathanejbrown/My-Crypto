@@ -98,7 +98,6 @@ class Blockchain:
         return amount_received - amount_sent
 
     def get_last_blockchain_value(self):
-        """ Returns the last value of the current blockchain """
         if len(self.__chain) < 1:
             return None
         return self.__chain[-1]
