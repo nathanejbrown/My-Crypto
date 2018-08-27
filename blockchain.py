@@ -107,8 +107,6 @@ class Blockchain:
         if self.hosting_node == None:
             return False
         transaction = Transaction(sender, recipient, signature, amount)
-        if not Wallet.verify_transaction(transaction):
-            return False
         if Verification.verify_transaction(transaction, self.get_balance):
             self.__open_transactions.append(transaction)
             self.save_data()
@@ -124,11 +122,11 @@ class Blockchain:
         reward_transaction = Transaction('MINING', self.hosting_node, '', MINING_REWARD)
         # [:] tells it to copy the entire list, not just to copy the reference to it in memory. Before the : you can add the starting index and the last index + 1 that you want copied. 
         copied_transactions = self.__open_transactions[:]
-        copied_transactions.append(reward_transaction)
-        block = Block(len(self.__chain), hashed_block, copied_transactions, proof)
-        for tx in block.transactions:
+        for tx in copied_transactions:
             if not Wallet.verify_transaction(tx):
                 return False
+        copied_transactions.append(reward_transaction)
+        block = Block(len(self.__chain), hashed_block, copied_transactions, proof)
         self.__chain.append(block)
         self.__open_transactions = []
         self.save_data()
