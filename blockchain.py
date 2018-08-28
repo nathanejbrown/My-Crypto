@@ -13,12 +13,13 @@ MINING_REWARD = 10
 
 class Blockchain:
     # __init__ scopes these values to a specific instance, not to the class as a whole.
-    def __init__(self, hosting_node_id):
+    def __init__(self, public_key, node_id):
         genesis_block = Block(0, '', [], 100, 0)
         self.chain = [genesis_block]
         self.open_transactions = []
-        self.hosting_node = hosting_node_id
+        self.public_key = public_key
         self.__peer_nodes = set()
+        self.node_id = node_id
         self.load_data()
 
     @property
@@ -42,7 +43,7 @@ class Blockchain:
 
     def load_data(self):
         try:
-            with open('blockchain.txt', mode='r') as f:
+            with open('blockchain-{}.txt'.format(self.node_id), mode='r') as f:
                 # file_content = pickle.loads(f.read())
                 file_content = f.readlines()
 
@@ -68,7 +69,7 @@ class Blockchain:
 
     def save_data(self):
         try:
-            with open('blockchain.txt', mode='w') as f:
+            with open('blockchain-{}.txt'.format(self.node_id), mode='w') as f:
                 saveable_chain = [block.__dict__ for block in [Block(block_el.index, block_el.previous_hash, [tx.__dict__ for tx in block_el.transactions], block_el.proof, block_el.timestamp) 
                     for block_el in self.__chain]]
                 f.write(json.dumps(saveable_chain))
@@ -89,9 +90,9 @@ class Blockchain:
         return proof
 
     def get_balance(self):
-        if self.hosting_node == None:
+        if self.public_key == None:
             return None
-        participant = self.hosting_node
+        participant = self.public_key
 
         tx_sender = [[tx.amount for tx in block.transactions 
             if tx.sender == participant] for block in self.__chain]
@@ -109,7 +110,7 @@ class Blockchain:
         return self.__chain[-1]
 
     def add_transaction(self, recipient, sender, signature, amount=1.0):
-        if self.hosting_node == None:
+        if self.public_key == None:
             return False
         transaction = Transaction(sender, recipient, signature, amount)
         if Verification.verify_transaction(transaction, self.get_balance):
@@ -119,12 +120,12 @@ class Blockchain:
         return False
 
     def mine_block(self):
-        if self.hosting_node == None:
+        if self.public_key == None:
             return None
         last_block = self.__chain[-1]
         hashed_block = hash_block(last_block)
         proof = self.proof_of_work()
-        reward_transaction = Transaction('MINING', self.hosting_node, '', MINING_REWARD)
+        reward_transaction = Transaction('MINING', self.public_key, '', MINING_REWARD)
         # [:] tells it to copy the entire list, not just to copy the reference to it in memory. Before the : you can add the starting index and the last index + 1 that you want copied. 
         copied_transactions = self.__open_transactions[:]
         for tx in copied_transactions:
