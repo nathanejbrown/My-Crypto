@@ -45,7 +45,6 @@ class Blockchain:
     def load_data(self):
         try:
             with open('blockchain-{}.txt'.format(self.node_id), mode='r') as f:
-                # file_content = pickle.loads(f.read())
                 file_content = f.readlines()
 
                 blockchain = json.loads(file_content[0][:-1])
